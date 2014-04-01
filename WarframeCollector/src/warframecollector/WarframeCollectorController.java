@@ -23,7 +23,8 @@ public class WarframeCollectorController {
         ArrayList<String[]> arrayList1 = new ArrayList<String[]>();
         arrayList1.add(arr);
         view.populateWarframes( arrayList1 );
-        System.out.println("Done.");
+        
+        view.initializeTableListeners();
     }
     
 }

@@ -8,13 +8,15 @@ package warframecollector;
 
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
  * @author Joseph
  */
-public class WarframeCollectorView extends javax.swing.JFrame {
+public class WarframeCollectorView extends javax.swing.JFrame implements javax.swing.event.TableModelListener {
 
     public WarframeCollectorController controller;
     
@@ -65,13 +67,21 @@ public class WarframeCollectorView extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Integer.class
+                java.lang.Object.class, java.lang.Boolean.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
+        warframeTable.getTableHeader().setReorderingAllowed(false);
         warframeScrollPane.setViewportView(warframeTable);
 
         itemTabbedPane.addTab("Warframe", warframeScrollPane);
@@ -186,6 +196,36 @@ public class WarframeCollectorView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void initializeTableListeners() {
+        
+        ArrayList<javax.swing.JTable> tables = new ArrayList<javax.swing.JTable>();
+        tables.add(warframeTable);
+        tables.add(primaryTable);
+        tables.add(secondaryTable);
+        tables.add(meleeTable);
+        tables.add(sentinelTable);
+        tables.add(sentinelWeaponTable);
+        tables.add(cosmeticTable);
+        
+        for ( javax.swing.JTable table : tables ) {
+            table.getModel().addTableModelListener(this);
+        }
+        
+    }
+    
+    public void tableChanged( TableModelEvent e ) {
+        
+        int row = e.getFirstRow();
+        int column = e.getColumn();
+        TableModel model = (TableModel)e.getSource();
+        String columnName = model.getColumnName(column);
+        Object data = model.getValueAt(row, column);
+        
+        System.out.println("Column name was: " + columnName);
+        System.out.println("Data is: " + data);
+        
+    }
+    
     public void populateWarframes( ArrayList<String[]> warframes ) {
         
         System.out.println("Populating...");
